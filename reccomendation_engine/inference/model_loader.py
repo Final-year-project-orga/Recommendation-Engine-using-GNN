@@ -15,6 +15,11 @@ import numpy as np
 from reccomendation_engine.embeddings import load_embeddings
 
 
+#you're trusting their function to hand back (user_embeddings, product_embeddings, metadata) in that exact shape. 
+# If Person 2 ever changes what that function returns,
+# this file breaks — which is exactly why isolating it here (rather than inline in recommender.py) matters: the blast radius of their change stays contained to one file.
+
+
 @dataclass
 class ModelArtifacts:
     """Container for everything inference needs, loaded once and reused."""

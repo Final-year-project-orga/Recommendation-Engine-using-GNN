@@ -23,6 +23,7 @@ from reccomendation_engine.candidate_generation.similarity import SimilarityCalc
 
 
 class Recommender:
+    #This is called delegation: Recommender just passes the parameter through rather than hardcoding it twice."embedding_dir"
     def __init__(self, embedding_dir: str = "reccomendation_engine/embeddings"):
         # Loading is now the ModelLoader's job -- it handles missing files,
         # metadata validation, and shape checks. This class only does inference.
@@ -37,6 +38,8 @@ class Recommender:
         """
         if user_id not in self.artifacts.user_id_to_idx:
             return []
+        # This is a guard clause — handle the edge case first, and exit early, 
+        # so the rest of the function can assume "the user definitely exists" without nested if/else blocks.
 
         user_idx = self.artifacts.user_id_to_idx[user_id]
         user_vector = self.artifacts.user_embeddings[user_idx]
