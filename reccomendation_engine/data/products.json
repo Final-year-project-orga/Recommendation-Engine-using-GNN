@@ -1,0 +1,92 @@
+[
+    {
+        "_id": "item_1",
+        "name": "Product 1",
+        "category": "Home",
+        "brand": "Apple",
+        "price": 20755,
+        "stock": 8,
+        "rating": 4.2
+    },
+    {
+        "_id": "item_2",
+        "name": "Product 2",
+        "category": "Sports",
+        "brand": "LG",
+        "price": 35208,
+        "stock": 39,
+        "rating": 3.5
+    },
+    {
+        "_id": "item_3",
+        "name": "Product 3",
+        "category": "Electronics",
+        "brand": "Samsung",
+        "price": 22251,
+        "stock": 15,
+        "rating": 4.8
+    },
+    {
+        "_id": "item_4",
+        "name": "Product 4",
+        "category": "Books",
+        "brand": "LG",
+        "price": 68122,
+        "stock": 0,
+        "rating": 3.9
+    },
+    {
+        "_id": "item_5",
+        "name": "Product 5",
+        "category": "Books",
+        "brand": "Apple",
+        "price": 83839,
+        "stock": 18,
+        "rating": 4.3
+    },
+    {
+        "_id": "item_6",
+        "name": "Product 6",
+        "category": "Sports",
+        "brand": "Puma",
+        "price": 62684,
+        "stock": 26,
+        "rating": 4.4
+    },
+    {
+        "_id": "item_7",
+        "name": "Product 7",
+        "category": "Home",
+        "brand": "Apple",
+        "price": 58333,
+        "stock": 35,
+        "rating": 3.9
+    },
+    {
+        "_id": "item_8",
+        "name": "Product 8",
+        "category": "Beauty",
+        "brand": "LG",
+        "price": 2769,
+        "stock": 0,
+        "rating": 3.5
+    },
+    {
+        "_id": "item_9",
+        "name": "Product 9",
+        "category": "Beauty",
+        "brand": "Sony",
+        "price": 6424,
+        "stock": 24,
+        "rating": 4.1
+    },
+    {
+        "_id": "item_10",
+        "name": "Product 10",
+        "category": "Beauty",
+        "brand": "Adidas",
+        "price": 15403,
+        "stock": 26,
+        "rating": 4.3
+    }
+]
