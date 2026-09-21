@@ -5,3 +5,5 @@
 **Saptarshi**- Finished learning about how LightGCN works and made a simple Custom LightGCN model using pytorch and trained an example graph which generates the user and item embeddings
 
 **Retovash:**-------------
+
+**Decision Taken** - Decision taken to use ChromaDB instead of FAISS
