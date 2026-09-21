@@ -1,60 +1,36 @@
-"""
-Person 4 scope: Inference layer.
-
-Wires together:
-  - model_loader.py (Person 2's trained embeddings, loaded and validated)
-  - Person 3's similarity utilities (reccomendation_engine.candidate_generation.similarity)
-
-This is the real integration point the pipeline was designed for -- Person 2's
-generate_embeddings.py explicitly notes its output is "Compatible with Person 3's
-SimilarityCalculator and FAISS indexing." No mocking needed for this part.
-
-NOTE: Person 3's `candidate_generator.py` and `faiss_index.py` (for scaling past
-a handful of products) and the `filtering/` + `ranking/` stages don't exist yet.
-This class covers candidate generation via brute-force cosine similarity only --
-swap `_get_top_k_indices` for a FAISS query once that's ready, and call
-filtering/ranking here once Person 3 ships those.
-"""
 
 from typing import List, Tuple
 
 from reccomendation_engine.inference.model_loader import ModelLoader
-from reccomendation_engine.candidate_generation.similarity import SimilarityCalculator
+from reccomendation_engine.candidate_generation.candidate_generator import get_candidates
+from reccomendation_engine.ranking.ranker import Ranker
 
 
 class Recommender:
-    #This is called delegation: Recommender just passes the parameter through rather than hardcoding it twice."embedding_dir"
-    def __init__(self, embedding_dir: str = "reccomendation_engine/embeddings"):
-        # Loading is now the ModelLoader's job -- it handles missing files,
-        # metadata validation, and shape checks. This class only does inference.
+    def __init__(self, embedding_dir: str = "reccomendation_engine/exported_embedding"):
         loader = ModelLoader(embedding_dir)
         self.artifacts = loader.load()
+        self.ranker = Ranker()
 
     def get_recommendations(self, user_id: str, top_k: int = 10) -> List[Tuple[str, float]]:
-        """
-        Returns a list of (product_id, score) tuples, ranked highest first.
-        Empty list means "no recommendations" (e.g. unknown user) -- the API
-        layer turns that into a 404.
-        """
         if user_id not in self.artifacts.user_id_to_idx:
             return []
-        # This is a guard clause — handle the edge case first, and exit early, 
-        # so the rest of the function can assume "the user definitely exists" without nested if/else blocks.
 
         user_idx = self.artifacts.user_id_to_idx[user_id]
         user_vector = self.artifacts.user_embeddings[user_idx]
 
-        k = min(top_k, len(self.artifacts.product_ids))
-        top_indices, scores = SimilarityCalculator.top_k_by_cosine(
-            query_vector=user_vector,
-            item_vectors=self.artifacts.product_embeddings,
-            k=k,
-        )
+        # Ask for more candidates than top_k, since inventory filtering
+        # (out-of-stock items) may drop some before ranking narrows to top_k.
+        candidates = get_candidates(user_vector, top_k=max(top_k * 2, top_k), filters=None)
 
-        return [
-            (self.artifacts.product_ids[idx], float(score))
-            for idx, score in zip(top_indices, scores)
-        ]
+        if not candidates:
+            return []
+
+        ranked = self.ranker.get_top_n(candidates, n=top_k)
+
+        # Person 3's product dicts use "item_id" as the key (from Postgres),
+        # not "product_id" -- confirm this matches what the API layer expects.
+        return [(item["item_id"], item["final_score"]) for item in ranked]
 
 
 if __name__ == "__main__":
